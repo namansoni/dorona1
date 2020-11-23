@@ -53,6 +53,23 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
               ),
               ListTile(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ShowReport(),
+                  ));
+                },
+                leading: Icon(
+                  MyCustomIcons.stethoscope,
+                  size: 30,
+                  color: iconColor,
+                ),
+                title: Text(
+                  "See Your Report",
+                  style: simpleTextDrawer,
+                ),
+              ),
+              ListTile(
                 onTap: () async {
                   if (await canLaunch("tel:1075")) {
                     Navigator.of(context).pop();
