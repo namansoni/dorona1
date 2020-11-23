@@ -147,7 +147,36 @@ exports.onLocationUpdate = functions
         }
 
     });
-exports.date = functions.https.onRequest((req, res) => {
-        // ...
-        console.log("called date function");
+exports.onUserStatusUpdate = functions
+    .firestore
+    .document('/status/{userId}')
+    .onUpdate(async (change, context) => {
+        
+            const userId = context.params.userId;
+            const userRef = admin.firestore().collection("Users").doc(userId);
+            const userDoc = await userRef.get();
+            const androidNotificationToken = userDoc.data()['androidNotificationToken'];
+            const message = {
+                notification: {
+                    body: 'Your covid report has come',
+                    title: "Covid Report",
+                },
+                token: androidNotificationToken,
+                android: {
+                    notification: {
+                        
+                        tag:userId+"covidReport",
+                        notification_priority:"PRIORITY_DEFAULT"
+                    },
+                    priority: 'high',
+                    ttl: 0
+                }
+
+            };
+            admin.messaging().send(message).then(res => {
+                console.log("message sent successfully ", res);
+            }).catch(error => {
+                console.log("Error : ", error);
+            });
+        
     });
