@@ -47,7 +47,7 @@ class UserProvider extends ChangeNotifier {
               'uid': user.uid,
               'phoneno': user.phoneNumber,
               'bluetoothAddress': macAddress
-            });
+            },SetOptions(merge:true));
           }
         });
       } else {

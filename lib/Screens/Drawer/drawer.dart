@@ -1,6 +1,8 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dorona/Screens/QrScanner/showQr.dart';
+import 'package:dorona/Screens/ReportPDFViewer/show_report.dart';
 import 'package:dorona/Screens/Surverys/chatBot.dart';
+import 'package:dorona/Screens/xRayTest/xRayTestHome.dart';
 import 'package:dorona/colors1.dart';
 import 'package:dorona/my_custom_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +11,7 @@ import 'package:dorona/styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dorona/Screens/Drawer/chatbot.dart';
+
 class CustomDrawer extends StatefulWidget {
   BuildContext homecontext;
   CustomDrawer(this.homecontext);
@@ -88,6 +91,21 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ),
               ListTile(
                 leading: Icon(
+                  MyCustomIcons.heartbeat,
+                  size: 30,
+                  color: iconColor,
+                ),
+                title: Text(
+                  "Test yourself",
+                  style: simpleTextDrawer,
+                ),
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => XRayTestHome()));
+                },
+              ),
+              ListTile(
+                leading: Icon(
                   MyCustomIcons.cog_outline,
                   size: 30,
                   color: iconColor,
@@ -143,9 +161,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 color: iconColor,
               ),
               ListTile(
-                onTap: (){
-                  
-                },
+                onTap: () {},
                 title: Text(
                   "Privacy Policy",
                   style: simpleTextDrawer,
@@ -156,9 +172,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   "Personal Assistant",
                   style: simpleTextDrawer,
                 ),
-                onTap: (){
+                onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => HomePageDialogflow(),
+                    builder: (context) => HomePageDialogflow(),
                   ));
                 },
               )

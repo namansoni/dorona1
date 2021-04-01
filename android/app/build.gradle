@@ -24,10 +24,18 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+def keystorePropertiesFile=rootProject.file("key.properties")
+def keystoreProperties=new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdkVersion 28
     lintOptions {
         checkReleaseBuilds false
+    }
+    aaptOptions {
+        noCompress 'tflite'
+        noCompress 'lite'
     }
 
     defaultConfig {
@@ -38,6 +46,14 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+    }
+    signingConfigs{
+        release{
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
     }
 
     buildTypes {

@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
           home: SplashScreen(
-        seconds: 5,
+        seconds: 2,
         backgroundColor: Colors.white,
         navigateAfterSeconds: OnBoarding(),
         title: Text(

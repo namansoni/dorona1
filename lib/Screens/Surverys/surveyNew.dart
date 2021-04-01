@@ -41,148 +41,151 @@ class _SurveyNewState extends State<SurveyNew> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Visibility(
-          visible: !isQuestion[0],
-          child: FadeOutLeft(
-            manualTrigger: true,
-            controller: (controller) {
-              firstWidgetController = controller;
-            },
-            child: Column(
-              children: [
-                SizedBox(height: 20),
-                FadeIn(
-                  child: Container(
-                    width: width,
-                    child: Image.asset(
-                      'assets/images/doctor.png',
-                      height: 200,
-                      width: 200,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Visibility(
+            visible: !isQuestion[0],
+            child: FadeOutLeft(
+              manualTrigger: true,
+              controller: (controller) {
+                firstWidgetController = controller;
+              },
+              child: Column(
+                children: [
+                  SizedBox(height: 20),
+                  FadeIn(
+                    child: Container(
+                      width: width,
+                      child: Image.asset(
+                        'assets/images/doctor.png',
+                        height: 200,
+                        width: 200,
+                      ),
                     ),
                   ),
-                ),
-                FadeIn(
-                  child: Container(
-                      width: width * 0.7,
-                      padding: EdgeInsets.only(top: 10, left: 10, bottom: 2),
-                      child: Text(
-                        "Accurate answers help us-help you better. Medical and support staff are valuable and very limited. Be a responsible citizen.",
-                        style: subtitleTextSmall,
-                        textAlign: TextAlign.center,
-                      )),
-                ),
-              ],
+                  FadeIn(
+                    child: Container(
+                        width: width * 0.7,
+                        padding: EdgeInsets.only(top: 10, left: 10, bottom: 2),
+                        child: Text(
+                          "Accurate answers help us-help you better. Medical and support staff are valuable and very limited. Be a responsible citizen.",
+                          style: subtitleTextSmall,
+                          textAlign: TextAlign.center,
+                        )),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        SizedBox(height: 10),
-        Visibility(
-          visible: !isQuestion[0],
-          child: FadeOutLeft(
-            manualTrigger: true,
-            controller: (controller) {
-              animationController = controller;
-            },
-            child: FadeIn(
-              child: Container(
-                width: width * 0.5,
-                child: RaisedButton(
-                  color: blueColor,
-                  animationDuration: Duration(seconds: 1),
-                  elevation: 6.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(1000),
-                  ),
-                  onPressed: () async {
-                    animationController.forward();
-                    firstWidgetController.forward();
-                    setState(() {
-                      isQuestion[0] = true;
-                    });
-                    Timer(
-                        Duration(
-                          milliseconds: 50,
-                        ), () {
-                      question1Controller.forward();
-                    });
-                  },
-                  child: Text(
-                    "Okay, Got it",
-                    style: buttonText,
+          SizedBox(height: 10),
+          Visibility(
+            visible: !isQuestion[0],
+            child: FadeOutLeft(
+              manualTrigger: true,
+              controller: (controller) {
+                animationController = controller;
+              },
+              child: FadeIn(
+                child: Container(
+                  width: width * 0.5,
+                  child: RaisedButton(
+                    color: blueColor,
+                    animationDuration: Duration(seconds: 1),
+                    elevation: 6.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(1000),
+                    ),
+                    onPressed: () async {
+                      animationController.forward();
+                      firstWidgetController.forward();
+                      setState(() {
+                        isQuestion[0] = true;
+                      });
+                      Timer(
+                          Duration(
+                            milliseconds: 50,
+                          ), () {
+                        question1Controller.forward();
+                      });
+                    },
+                    child: Text(
+                      "Okay, Got it",
+                      style: buttonText,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-        Visibility(visible: isQuestionVisible(0), child: question1()),
-        Visibility(visible: isQuestionVisible(1), child: question2()),
-        Visibility(visible: isQuestionVisible(2), child: question3()),
-        Visibility(visible: isQuestionVisible(3), child: question4()),
-        Visibility(visible: isQuestionVisible(4), child: endSurvey()),
-        isQuestion.contains(true)
-            ? Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: blueColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.all(Radius.circular(100))),
-                  height: 50.0,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        curIndex += 1;
-                        if (curIndex < 5) isQuestion[curIndex] = true;
-                        if (curIndex == 1) {
-                          counter = counter + overall - 1;
-                        } else if (curIndex == 2) {
-                          counter = counter + double.tryParse(usingTimes);
-                        } else if (curIndex == 3) {
-                          if (thirdQuestionList[8].isSelected == true) {
-                            counter = counter + 0;
-                          } else {
-                            if (thirdQuestionList[0].isSelected == true)
-                              counter += 1;
-                            if (thirdQuestionList[1].isSelected == true)
-                              counter += 1;
-                            if (thirdQuestionList[2].isSelected == true)
-                              counter += 2;
-                            if (thirdQuestionList[3].isSelected == true)
-                              counter += 2;
-                            if (thirdQuestionList[4].isSelected == true)
-                              counter += 2;
-                            if (thirdQuestionList[5].isSelected == true)
-                              counter += 2;
-                            if (thirdQuestionList[6].isSelected == true)
-                              counter += 3;
-                            if (thirdQuestionList[7].isSelected == true)
-                              counter += 3;
-                          }
-                          print(counter);
-                        } else if (curIndex == 4) {
-                          print("END");
-                          //_startFifthStepAnimation();
+          Visibility(visible: isQuestionVisible(0), child: question1()),
+          Visibility(visible: isQuestionVisible(1), child: question2()),
+          Visibility(visible: isQuestionVisible(2), child: question3()),
+          Visibility(visible: isQuestionVisible(3), child: question4()),
+          Visibility(visible: isQuestionVisible(4), child: endSurvey()),
+          isQuestion.contains(true)
+              ? Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.all(Radius.circular(100))),
+                    height: 30.0,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          curIndex += 1;
+                          if (curIndex < 5) isQuestion[curIndex] = true;
+                          if (curIndex == 1) {
+                            counter = counter + overall - 1;
+                          } else if (curIndex == 2) {
+                            counter = counter + double.tryParse(usingTimes);
+                          } else if (curIndex == 3) {
+                            if (thirdQuestionList[8].isSelected == true) {
+                              counter = counter + 0;
+                            } else {
+                              if (thirdQuestionList[0].isSelected == true)
+                                counter += 1;
+                              if (thirdQuestionList[1].isSelected == true)
+                                counter += 1;
+                              if (thirdQuestionList[2].isSelected == true)
+                                counter += 2;
+                              if (thirdQuestionList[3].isSelected == true)
+                                counter += 2;
+                              if (thirdQuestionList[4].isSelected == true)
+                                counter += 2;
+                              if (thirdQuestionList[5].isSelected == true)
+                                counter += 2;
+                              if (thirdQuestionList[6].isSelected == true)
+                                counter += 3;
+                              if (thirdQuestionList[7].isSelected == true)
+                                counter += 3;
+                            }
+                            print(counter);
+                          } else if (curIndex == 4) {
+                            print("END");
+                            //_startFifthStepAnimation();
 
-                        } else if (curIndex == 5) {
-                          curIndex = 0;
-                          isQuestion = [false, false, false, false, false];
-                        }
-                      });
-                    },
-                    child: Center(
-                        child: Text(
-                      curIndex < 4 ? 'Continue' : 'Finish',
-                      style:
-                          TextStyle(fontSize: 20.0, color: Colors.orangeAccent),
-                    )),
+                          } else if (curIndex == 5) {
+                            curIndex = 0;
+                            isQuestion = [false, false, false, false, false];
+                          }
+                        });
+                      },
+                      child: Center(
+                          child: Text(
+                        curIndex < 4 ? 'Continue' : 'Finish',
+                        style: GoogleFonts.aleo(
+                          color: Colors.white
+                        ),
+                      )),
+                    ),
                   ),
-                ),
-              )
-            : Container()
-      ],
+                )
+              : Container()
+        ],
+      ),
     );
   }
 
@@ -203,67 +206,70 @@ class _SurveyNewState extends State<SurveyNew> {
         controller: (controller) {
           question1Controller = controller;
         },
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.6,
-          margin: EdgeInsets.only(top: 34.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.6,
+            margin: EdgeInsets.only(top: 34.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Center(
+                    child: Text(
+                      "Question 1",
+                      style:
+                          GoogleFonts.aleo(color: Colors.black, fontSize: 20.0),
+                    ),
+                  ),
+                ),
+                Spacer(
+                  flex: 2,
+                ),
+                Container(
                   child: Text(
-                    "Question 1",
+                    'How frequently do you visit public places?',
+                    textAlign: TextAlign.center,
                     style:
-                        GoogleFonts.aleo(color: Colors.black, fontSize: 30.0),
+                        GoogleFonts.aleo(color: Colors.black, fontSize: 20.0),
                   ),
                 ),
-              ),
-              Spacer(
-                flex: 2,
-              ),
-              Container(
-                child: Text(
-                  'How frequently do you visit public places?',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.aleo(color: Colors.black, fontSize: 30.0),
+                Spacer(
+                  flex: 1,
                 ),
-              ),
-              Spacer(
-                flex: 1,
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 50.0),
-                child: Text(
-                  overallStatus,
-                  style: TextStyle(
-                      color: blueColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30.0),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Center(
-                  child: Slider(
-                    activeColor: blueColor,
-                    value: overall,
-                    onChanged: (value) {
-                      setState(() {
-                        overall = value.round().toDouble();
-                        //print(overall);
-                        _getOverallStatus(overall);
-                      });
-                    },
-                    label: '${overall.toInt()}',
-                    divisions: 30,
-                    min: 1.0,
-                    max: 5.0,
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 50.0),
+                  child: Text(
+                    overallStatus,
+                    style: TextStyle(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30.0),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              )
-            ],
+                Expanded(
+                  flex: 3,
+                  child: Center(
+                    child: Slider(
+                      activeColor: blueColor,
+                      value: overall,
+                      onChanged: (value) {
+                        setState(() {
+                          overall = value.round().toDouble();
+                          //print(overall);
+                          _getOverallStatus(overall);
+                        });
+                      },
+                      label: '${overall.toInt()}',
+                      divisions: 30,
+                      min: 1.0,
+                      max: 5.0,
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ));
   }
@@ -320,55 +326,54 @@ class _SurveyNewState extends State<SurveyNew> {
                       textAlign: TextAlign.center,
                     )),
               ),
-              SizedBox(
-                height: 22.0,
-              ),
               Center(
                 child: Container(
-                  child: Column(
-                    children:
-                        List.generate(usingCollection.length, (int index) {
-                      final using = usingCollection[index];
-                      return GestureDetector(
-                        onTapUp: (detail) {
-                          setState(() {
-                            usingTimes = using.identifier;
-                            //print(usingTimes);
-                          });
-                        },
-                        child: Container(
-                          color: usingTimes == using.identifier
-                              ? blueColor.withOpacity(0.2)
-                              : Colors.white,
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Radio(
-                                      activeColor: blueColor,
-                                      value: using.identifier,
-                                      groupValue: usingTimes,
-                                      onChanged: (String value) {
-                                        setState(() {
-                                          usingTimes = value;
-                                        });
-                                      }),
-                                  Text(
-                                    using.displayContent,
-                                    style: GoogleFonts.aleo(fontSize: 20),
-                                  )
-                                ],
-                              ),
-                              Divider(
-                                height:
-                                    index < usingCollection.length ? 1.0 : 0.0,
-                              ),
-                            ],
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                      itemCount: usingCollection.length,
+                      itemBuilder: (context, index) {
+                        final using = usingCollection[index];
+                        return GestureDetector(
+                          onTapUp: (detail) {
+                            setState(() {
+                              usingTimes = using.identifier;
+                              //print(usingTimes);
+                            });
+                          },
+                          child: Container(
+                            color: usingTimes == using.identifier
+                                ? blueColor.withOpacity(0.2)
+                                : Colors.white,
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Radio(
+                                        activeColor: blueColor,
+                                        value: using.identifier,
+                                        groupValue: usingTimes,
+                                        onChanged: (String value) {
+                                          setState(() {
+                                            usingTimes = value;
+                                          });
+                                        }),
+                                    Text(
+                                      using.displayContent,
+                                      style: GoogleFonts.aleo(fontSize: 20),
+                                    )
+                                  ],
+                                ),
+                                Divider(
+                                  height: index < usingCollection.length
+                                      ? 1.0
+                                      : 0.0,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }),
-                  ),
+                        );
+                      }),
                 ),
               )
             ],

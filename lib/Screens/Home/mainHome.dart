@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dorona/Screens/NearbyYou/peopleNearByYou.dart';
 import 'package:dorona/Screens/News/news.dart';
@@ -45,65 +46,68 @@ class _MainHomeState extends State<MainHome> {
                 if (snapshot.hasError) {
                   return Center(child: CircularProgressIndicator());
                 }
-                return Container(
-                  // color: snapshot.data['status'] == 'negative'
-                  //     ? greenColor
-                  //     : Colors.red,
-                  decoration: BoxDecoration(
-                     borderRadius: BorderRadius.circular(10),
-                      gradient: LinearGradient(colors: [
-                    snapshot.data['status'] == 'negative'
-                        ? greenColor
-                        : Colors.red,
-                    snapshot.data['status'] == 'negative'
-                        ? greenColor.withOpacity(0.8)
-                        : Colors.red.withOpacity(0.8)
-                  ])),
-                  child: ListTile(
-                    leading: snapshot.data['status'] == 'negative'
-                        ? Image.asset("assets/images/safe.png")
-                        : Image.asset("assets/images/unsafe.png"),
-                    title: Container(
-                      margin: EdgeInsets.only(top: 5),
-                      child: Text(
-                        snapshot.data['status'] == 'negative'
-                            ? "You are safe"
-                            : "You are covid positive",
-                        style: GoogleFonts.aleo(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    subtitle: InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
-                          return PeopleNearByYou(userProvider.user.uid);
-                        }));
-                      },
-                      child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: snapshot.data['status'] == 'negative'
-                                ? greenColor
-                                : Colors.red,
-                            border: Border.all(color: Colors.white70, width: 2),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Center(
-                            child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "See others nearby you!",
-                              style: buttonText,
-                            ),
-                            Icon(
-                              Icons.play_arrow_rounded,
+                return FadeIn(
+                  child: Container(
+                    // color: snapshot.data['status'] == 'negative'
+                    //     ? greenColor
+                    //     : Colors.red,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          snapshot.data['status'] == 'negative'
+                              ? greenColor
+                              : Colors.red,
+                          snapshot.data['status'] == 'negative'
+                              ? greenColor.withOpacity(0.8)
+                              : Colors.red.withOpacity(0.8)
+                        ])),
+                    child: ListTile(
+                      leading: snapshot.data['status'] == 'negative'
+                          ? Image.asset("assets/images/safe.png")
+                          : Image.asset("assets/images/unsafe.png"),
+                      title: Container(
+                        margin: EdgeInsets.only(top: 5),
+                        child: Text(
+                          snapshot.data['status'] == 'negative'
+                              ? "You are safe"
+                              : "You are covid positive",
+                          style: GoogleFonts.aleo(
                               color: Colors.white,
-                            )
-                          ],
-                        )),
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      subtitle: InkWell(
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) {
+                            return PeopleNearByYou(userProvider.user.uid);
+                          }));
+                        },
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                              color: snapshot.data['status'] == 'negative'
+                                  ? greenColor
+                                  : Colors.red,
+                              border:
+                                  Border.all(color: Colors.white70, width: 2),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "See others nearby you!",
+                                style: buttonText,
+                              ),
+                              Icon(
+                                Icons.play_arrow_rounded,
+                                color: Colors.white,
+                              )
+                            ],
+                          )),
+                        ),
                       ),
                     ),
                   ),

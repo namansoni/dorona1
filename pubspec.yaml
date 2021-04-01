@@ -54,8 +54,12 @@ dependencies:
   firebase_messaging: ^7.0.3
   shared_preferences: ^0.5.12+4
   timeago: ^2.0.28
-  advance_pdf_viewer: ^1.2.0
-
+  share: ^0.6.5+4
+  flutter_cached_pdfview: ^0.3.0
+  tflite: ^1.1.1
+  image_picker: ^0.6.7+22
+  image: ^2.1.19
+  dio:
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -77,6 +81,8 @@ flutter:
      - assets/icons/
      - assets/mapStyles/night.json
      - assets/credentials.json
+     - assets/chestXRayModel/labels.txt
+     - assets/chestXRayModel/model.tflite
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
