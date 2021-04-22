@@ -60,6 +60,7 @@ dependencies:
   image_picker: ^0.6.7+22
   image: ^2.1.19
   dio:
+  connectivity: 
 dev_dependencies:
   flutter_test:
     sdk: flutter

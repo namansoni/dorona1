@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
 import 'package:dorona/colors1.dart';
 import 'package:flutter/material.dart';
@@ -200,113 +201,7 @@ class _XRayTestHomeState extends State<XRayTestHome> {
     Uint8List bytes = await pickedFile.readAsBytes();
   }
 
-  void startTest() async {
-    // var recognitions;
-    // try {
-    //   recognitions = await Tflite.runModelOnImage(
-    //       path: pickedImagePath, // required
-    //       imageMean: 0.0, // defaults to 117.0
-    //       imageStd: 255.0, // defaults to 1.0
-    //       numResults: 2, // defaults to 5
-    //       threshold: 0.2, // defaults to 0.1
-    //       asynch: true // defaults to true
-    //       );
-    //   if (recognitions.length > 0) {
-    //     print(recognitions[0]['confidence']);
-    //     double percentage = (1 - recognitions[0]['confidence']) * 100;
-    //     AwesomeDialog(
-    //       context: context,
-    //       dialogType: percentage < 50 ? DialogType.SUCCES : DialogType.ERROR,
-    //       title: "Results",
-    //       body: Column(
-    //         crossAxisAlignment: CrossAxisAlignment.center,
-    //         children: [
-    //           Text(
-    //             percentage < 50 ? "Covid Negative" : "Covid Positive",
-    //             style: GoogleFonts.aleo(
-    //               color: percentage < 50 ? Colors.green : Colors.red,
-    //               fontSize: 22,
-    //             ),
-    //           ),
-    //           SizedBox(height: 5),
-    //           Text(
-    //             "There is " +
-    //                 percentage.toStringAsFixed(2) +
-    //                 "% chance that your are covid positive.",
-    //             style: GoogleFonts.aleo(
-    //               color: Colors.grey[400],
-    //               fontSize: 15,
-    //             ),
-    //             textAlign: TextAlign.center,
-    //           ),
-    //         ],
-    //       ),
-    //     )..show();
-    //   } else {
-    //     AwesomeDialog(
-    //       context: context,
-    //       dialogType: DialogType.ERROR,
-    //       title: "Results",
-    //       body: Column(
-    //         crossAxisAlignment: CrossAxisAlignment.center,
-    //         children: [
-    //           Text(
-    //             "Covid Positive",
-    //             style: GoogleFonts.aleo(
-    //               color: Colors.red,
-    //               fontSize: 22,
-    //             ),
-    //           ),
-    //           SizedBox(height: 5),
-    //           Text(
-    //             "There is " +
-    //                 "61.89" +
-    //                 "% chance that your are covid positive.",
-    //             style: GoogleFonts.aleo(
-    //               color: Colors.grey[400],
-    //               fontSize: 15,
-    //             ),
-    //             textAlign: TextAlign.center,
-    //           ),
-    //         ],
-    //       ),
-    //     )..show();
-    //   }
-    // } catch (e) {
-    //   // TODO
-    //   AwesomeDialog(
-    //     context: context,
-    //     dialogType: DialogType.ERROR,
-    //     title: "Results",
-    //     body: Column(
-    //       crossAxisAlignment: CrossAxisAlignment.center,
-    //       children: [
-    //         Text(
-    //           "Covid Positive",
-    //           style: GoogleFonts.aleo(
-    //             color: Colors.red,
-    //             fontSize: 22,
-    //           ),
-    //         ),
-    //         SizedBox(height: 5),
-    //         Text(
-    //           "There is " + "61.89" + "% chance that your are covid positive.",
-    //           style: GoogleFonts.aleo(
-    //             color: Colors.grey[400],
-    //             fontSize: 15,
-    //           ),
-    //           textAlign: TextAlign.center,
-    //         ),
-    //       ],
-    //     ),
-    //   )..show();
-    // }
-    // // var recognitions = await Tflite.runModelOnBinary(
-    // //     binary: imageToByteListFloat32(decodeImage(File(pickedImagePath).readAsBytesSync()), 32, 127.5, 127.5), // required
-    // //     numResults: 6, // defaults to 5
-    // //     threshold: 0.05, // defaults to 0.1
-    // //     asynch: true // defaults to true
-    // //     );
+  void startTestUsingInternet() async {
     var formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(pickedImagePath),
     });
@@ -354,5 +249,92 @@ class _XRayTestHomeState extends State<XRayTestHome> {
         ],
       ),
     )..show();
+  }
+
+  void startTestWithoutInternet() async {
+    var recognitions;
+    try {
+      recognitions = await Tflite.runModelOnImage(
+          path: pickedImagePath, // required
+          imageMean: 0.0, // defaults to 117.0
+          imageStd: 255.0, // defaults to 1.0
+          numResults: 2, // defaults to 5
+          threshold: 0.2, // defaults to 0.1
+          asynch: true // defaults to true
+          );
+
+      print(recognitions[0]['confidence']);
+
+      double percentage = (1 - recognitions[0]['confidence']) * 100;
+      AwesomeDialog(
+        context: context,
+        dialogType: percentage < 50 ? DialogType.SUCCES : DialogType.ERROR,
+        title: "Results",
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              percentage < 50 ? "Covid Negative" : "Covid Positive",
+              style: GoogleFonts.aleo(
+                color: percentage < 50 ? Colors.green : Colors.red,
+                fontSize: 22,
+              ),
+            ),
+            SizedBox(height: 5),
+            Text(
+              "There is " +
+                  percentage.toStringAsFixed(2) +
+                  "% chance that your are covid positive.",
+              style: GoogleFonts.aleo(
+                color: Colors.grey[400],
+                fontSize: 15,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      )..show();
+    } catch (e) {
+      print("ERROR");
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.INFO,
+        title: 'Image not read properly',
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Something went wrong, Image not read properly',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.aleo(
+                color: Colors.red,
+                fontSize: 22,
+                
+              ),
+            ),
+          ],
+        ),
+      )..show();
+    }
+    // var recognitions = await Tflite.runModelOnBinary(
+    //     binary: imageToByteListFloat32(decodeImage(File(pickedImagePath).readAsBytesSync()), 32, 127.5, 127.5), // required
+    //     numResults: 6, // defaults to 5
+    //     threshold: 0.05, // defaults to 0.1
+    //     asynch: true // defaults to true
+    //     );
+  }
+
+  void startTest() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      // I am connected to a mobile network.
+      print("I am connected to internet");
+      startTestUsingInternet();
+    } else {
+      // I am connected to a wifi network.
+      print("I am not");
+      startTestWithoutInternet();
+    }
   }
 }
