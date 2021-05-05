@@ -1,0 +1,3 @@
+Covid
+Lung Opacity
+Normal

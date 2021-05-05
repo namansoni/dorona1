@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image/image.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/src/widgets/image.dart' as imageView;
@@ -161,8 +163,8 @@ class _XRayTestHomeState extends State<XRayTestHome> {
 
   void loadModel() async {
     res = await Tflite.loadModel(
-        model: "assets/chestXRayModel/model.tflite",
-        labels: "assets/chestXRayModel/labels.txt",
+        model: "assets/chestXRayModel/modelupdated.tflite",
+        labels: "assets/chestXRayModel/3ClassesModelLabels.txt",
         numThreads: 1, // defaults to 1
         isAsset:
             true, // defaults to true, set to false to load resources outside assets
@@ -201,6 +203,17 @@ class _XRayTestHomeState extends State<XRayTestHome> {
     Uint8List bytes = await pickedFile.readAsBytes();
   }
 
+  Future<img.Image> convertToGrayScale(img.Image src) async {
+    final p = src.getBytes();
+    for (var i = 0, len = p.length; i < len; i += 4) {
+      final l = getLuminanceRgb(p[i], p[i + 1], p[i + 2]);
+      p[i] = l;
+      p[i + 1] = l;
+      p[i + 2] = l;
+    }
+    return src;
+  }
+
   void startTestUsingInternet() async {
     var formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(pickedImagePath),
@@ -209,15 +222,34 @@ class _XRayTestHomeState extends State<XRayTestHome> {
       isLoading = true;
     });
     var response = await Dio().post(
-        'https://limitless-cliffs-84762.herokuapp.com/py',
+        'https://limitless-cliffs-84762.herokuapp.com/xray',
         data: formData);
     print(response.data);
     setState(() {
       isLoading = false;
     });
+    double percentage;
+    String label;
+    double covidPer = double.parse(response.data['COVID']);
+    double lungPer = double.parse(response.data['Lung Infection']);
+    double normalPer = double.parse(response.data['Normal']);
+    if (covidPer > lungPer && covidPer > normalPer) {
+      percentage = covidPer;
+      label = "Covid Positive";
+    }
+
+    if (lungPer > covidPer && lungPer > normalPer) {
+      percentage = lungPer;
+      label = "Lung Opacity";
+    }
+
+    if (normalPer > covidPer && normalPer > lungPer) {
+      percentage = normalPer;
+      label = "Normal";
+    }
     AwesomeDialog(
       context: context,
-      dialogType: response.data.toString() == "COVID"
+      dialogType: label == "Covid Positive" || label == "Lung Opacity"
           ? DialogType.ERROR
           : DialogType.SUCCES,
       title: "Results",
@@ -225,26 +257,33 @@ class _XRayTestHomeState extends State<XRayTestHome> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            response.data.toString() == "COVID"
-                ? "Covid Positive"
-                : "Covid Negative",
+            label,
             style: GoogleFonts.aleo(
-              color: response.data.toString() == "COVID"
+              color: label == "Covid Positive" || label == "Lung Opacity"
                   ? Colors.red
                   : Colors.green,
               fontSize: 22,
             ),
           ),
           SizedBox(height: 5),
-          Text(
-            response.data.toString() == "COVID"
-                ? "There is a chance that you are covid positive. Please don't consider this as your final report."
-                : "",
-            style: GoogleFonts.aleo(
-              color: Colors.grey[400],
-              fontSize: 15,
+          Padding(
+            padding: EdgeInsets.all(15.0),
+            child: new LinearPercentIndicator(
+              animation: true,
+              lineHeight: 20.0,
+              animationDuration: 1000,
+              percent: percentage ,
+              center: Text(
+                "${(percentage*100).toInt()} %",
+                style: GoogleFonts.aleo(
+                  color: Colors.white,
+                ),
+              ),
+              linearStrokeCap: LinearStrokeCap.roundAll,
+              progressColor: label == "Covid Positive" || label == "Lung Opacity"
+                  ? Colors.red
+                  : Colors.green,
             ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -252,44 +291,67 @@ class _XRayTestHomeState extends State<XRayTestHome> {
   }
 
   void startTestWithoutInternet() async {
-    var recognitions;
+    List recognitions;
     try {
       recognitions = await Tflite.runModelOnImage(
           path: pickedImagePath, // required
           imageMean: 0.0, // defaults to 117.0
           imageStd: 255.0, // defaults to 1.0
-          numResults: 2, // defaults to 5
+          numResults: 5, // defaults to 5
           threshold: 0.2, // defaults to 0.1
           asynch: true // defaults to true
           );
+      print(recognitions);
+      double percentage = recognitions[0]['confidence'] * 100;
+      String label = recognitions[0]['label'];
+      recognitions.forEach((element) {
+        if (element['confidence'] > percentage) {
+          percentage = element['confidence'];
+          label = element['label'];
+        }
+      });
 
-      print(recognitions[0]['confidence']);
-
-      double percentage = (1 - recognitions[0]['confidence']) * 100;
       AwesomeDialog(
         context: context,
-        dialogType: percentage < 50 ? DialogType.SUCCES : DialogType.ERROR,
+        dialogType: label == "Covid" || label == "Lung Opacity"
+            ? DialogType.ERROR
+            : DialogType.SUCCES,
         title: "Results",
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              percentage < 50 ? "Covid Negative" : "Covid Positive",
+              label == "Covid"
+                  ? "Covid Positive"
+                  : label == "Lung Opacity"
+                      ? "Lung Opacity"
+                      : "Normal",
               style: GoogleFonts.aleo(
-                color: percentage < 50 ? Colors.green : Colors.red,
+                color: label == "Covid" || label == "Lung Opacity"
+                    ? Colors.red
+                    : Colors.green,
                 fontSize: 22,
               ),
             ),
             SizedBox(height: 5),
-            Text(
-              "There is " +
-                  percentage.toStringAsFixed(2) +
-                  "% chance that your are covid positive.",
-              style: GoogleFonts.aleo(
-                color: Colors.grey[400],
-                fontSize: 15,
+            Padding(
+              padding: EdgeInsets.all(15.0),
+              child: new LinearPercentIndicator(
+                animation: true,
+                lineHeight: 20.0,
+                animationDuration: 1000,
+                percent: percentage / 100,
+                center: Text(
+                  "${percentage.toInt()} %",
+                  style: GoogleFonts.aleo(
+                    color: Colors.white,
+                  ),
+                ),
+                linearStrokeCap: LinearStrokeCap.roundAll,
+                progressColor: label == "Covid" || label == "Lung Opacity"
+                    ? Colors.red
+                    : Colors.green,
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -309,7 +371,6 @@ class _XRayTestHomeState extends State<XRayTestHome> {
               style: GoogleFonts.aleo(
                 color: Colors.red,
                 fontSize: 22,
-                
               ),
             ),
           ],
@@ -330,6 +391,7 @@ class _XRayTestHomeState extends State<XRayTestHome> {
         connectivityResult == ConnectivityResult.wifi) {
       // I am connected to a mobile network.
       print("I am connected to internet");
+
       startTestUsingInternet();
     } else {
       // I am connected to a wifi network.
