@@ -159,6 +159,13 @@ public class MainActivity extends FlutterActivity{
                                     }
 
                                 }
+                                if(call.method.equals("setRepeatingVaccineSlotReminder")){
+                                    AlarmManager alarmManager =(AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                                    Intent intent = new Intent();
+                                    PendingIntent pendingIntent = PendingIntent.getService(this, 10, intent,PendingIntent.FLAG_NO_CREATE);
+                                    
+
+                                }
                             }
                     );
         }

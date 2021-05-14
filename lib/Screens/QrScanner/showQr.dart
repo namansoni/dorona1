@@ -62,6 +62,7 @@ class _ShowQrState extends State<ShowQr> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(1000)),
             onPressed: () async {
+              
               final scanResult = await scanner.scan();
               FirebaseFirestore.instance
                   .collection('status')
