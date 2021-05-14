@@ -116,7 +116,7 @@ class _OnBoardingState extends State<OnBoarding> {
   void getPermissions() async {
     await requestPermission();
   }
-
+//sdsdsd
   void showDialog1() {
     AwesomeDialog(
       context: context,
